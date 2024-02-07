@@ -1,0 +1,125 @@
+body {
+  background-color: #111;
+  color: #eee;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  min-height: 100vh;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 50px 20px;
+  min-height: 50vh;
+}
+
+.add-section {
+  margin-right: 20px; 
+}
+.add-section, .show-todo-section {
+  background-color: #222;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  width: 400px;
+  
+}
+
+.add-section input[type="text"] {
+  width: calc(100% - 90px);
+  height: 40px;
+  padding: 10px;
+  border: 2px solid #444;
+  border-radius: 5px 5px;
+  font-size: 16px;
+  outline: none;
+  background-color: #333;
+  color: #eee;
+}
+
+.add-section button {
+  margin-top: 10px;
+  width: 80px;
+  height: 44px;
+  border: none;
+  outline: none;
+  background-color: #e42020;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 5px 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-section button:hover {
+  background-color: #0c7e21;
+}
+
+.show-todo-section {
+  background-color: #222;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.todo-item {
+  background-color: #333;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  padding: 20px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+.todo-item h2 {
+  font-size: 20px;
+  color: #eee;
+  margin-bottom: 10px;
+}
+
+.todo-item small {
+  font-size: 14px;
+  color: #aaa;
+}
+
+.remove-to-do {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.remove-to-do:hover {
+  color: #FF6666;
+}
+
+.checkbox-container {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  bottom: 20px;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.checkbox-container input[type="checkbox"] + label {
+  position: relative;
+  top: 4px;
+  left: 10px;
+  color: #aaa;
+  cursor: pointer;
+}
