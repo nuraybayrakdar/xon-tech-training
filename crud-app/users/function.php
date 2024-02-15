@@ -135,4 +135,47 @@ function storeUser() {
     }
 }
 
+function updateUser($userInput, $userParams) {
+    global $conn;
+
+    if (!isset($userParams['id']) || $userParams['id'] == null) {
+        return error422('User id is not found in URL');
+    }
+
+    $userId = mysqli_real_escape_string($conn, $userParams['id']);
+
+    $username = isset($userInput['username']) ? mysqli_real_escape_string($conn, $userInput['username']) : null;
+    $email = isset($userInput['email']) ? mysqli_real_escape_string($conn, $userInput['email']) : null;
+    $password = isset($userInput['password']) ? password_hash(mysqli_real_escape_string($conn, $userInput['password']), PASSWORD_DEFAULT) : null;
+
+    if ($username === null && $email === null && $password === null) {
+        return error422('At least one field (username, email, password) must be provided for update');
+    }
+
+    $setValues = [];
+    if ($username !== null) $setValues[] = "username = '$username'";
+    if ($email !== null) $setValues[] = "email = '$email'";
+    if ($password !== null) $setValues[] = "password = '$password'";
+
+    $setClause = implode(", ", $setValues);
+    $query = "UPDATE users SET $setClause WHERE id = '$userId'";
+    $result = mysqli_query($conn, $query);
+
+    if ($result) {
+        $data = [
+            "status" => 200,
+            "message" => "User updated successfully"
+        ];
+        header("HTTP/1.0 200 Success");
+        echo json_encode($data);
+    } else {
+        $data = [
+            "status" => 500,
+            "message" => "This method is not allowed"
+        ];
+        header("HTTP/1.0 500 Internal Server");
+        echo json_encode($data);
+    }
+}
+
 ?>
