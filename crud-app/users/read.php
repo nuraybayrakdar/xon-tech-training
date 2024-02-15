@@ -7,12 +7,17 @@ header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,
 
 include('function.php');
 
-
 $request_method = $_SERVER["REQUEST_METHOD"];
 
 if($request_method == "GET"){
-   $userList = getUserList();
-   echo $userList;
+    if(isset($_GET['id'])){
+        $user = getUser($_GET);
+        echo $user;
+    }
+    else{
+        $userList = getUserList();
+        echo $userList;
+    }
 } 
 else {
     $data = [

@@ -2,6 +2,16 @@
 
 require '../inc/dbcon.php';
 
+function error422($message){
+    $data = [
+        "status" => 422,
+        "message" => $message
+    ];
+    header("HTTP/1.0 422 Unprocessable Entity");
+    echo json_encode($data);
+    exit();
+}
+
 function getUserList(){
     global $conn;
     $query = "SELECT * FROM users";
@@ -38,14 +48,43 @@ function getUserList(){
 
 }
 
-function error422($message){
-    $data = [
-        "status" => 422,
-        "message" => $message
-    ];
-    header("HTTP/1.0 422 Unprocessable Entity");
-    echo json_encode($data);
-    exit();
+function getUser($userParams){
+    global $conn;
+   
+   if($userParams['id'] == null){
+      return error422("User id is required");
+   }
+
+    $userId = mysqli_real_escape_string($conn, $userParams['id']);
+    $query = "SELECT * FROM users WHERE id = '$userId' LIMIT 1";
+    $result = mysqli_query($conn, $query);
+
+    if($result){
+      if (mysqli_num_rows($result) == 1) {
+        $res = mysqli_fetch_assoc($result);
+        $data = [
+            "status" => 200,
+            "message" => "User fetched successfully",
+            "data" => $res
+        ];
+        return json_encode($data);
+      } else{
+        $data = [
+            "status" => 404,
+            "message" => "No user found"
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+      }
+    } else{
+        $data = [
+            "status" => 500,
+            "message" => "This method is not allowed"
+        ];
+        header("HTTP/1.0 500 Internal Server");
+        return json_encode($data);
+    }
+
 }
 
 function storeUser() {
