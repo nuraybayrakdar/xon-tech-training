@@ -178,4 +178,35 @@ function updateUser($userInput, $userParams) {
     }
 }
 
+function deleteUser($userParams){
+    global $conn;
+
+    if (!isset($_GET['id'])){
+        return error422('User id is not found in URL');
+    } elseif($userParams['id'] == null){    
+        return error422('Enter user id');
+    } 
+
+    $userId = mysqli_real_escape_string($conn, $userParams['id']);
+
+    $query = "DELETE FROM users WHERE id = '$userId' LIMIT 1";
+    $result = mysqli_query($conn, $query);
+
+    if ($result) {
+        $data = [
+            "status" => 200,
+            "message" => "User deleted successfully"
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            "status" => 404,
+            "message" => "Customer not found"
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+
+}
 ?>
