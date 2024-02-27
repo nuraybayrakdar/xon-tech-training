@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+</head>
+<body>
+    <h2>User Profile</h2>
+    <p>Welcome, <span id="username"></span>!</p>
+    <p>Email: <span id="email"></span></p>
+    <p>Created at: <span id="createdAt"></span></p>
+    <p>Updated at: <span id="updatedAt"></span></p>
+    <a href="login-page.php">Logout</a>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        const userId = sessionStorage.getItem('userid');
+        console.log(userId);
+        $(document).ready(function() {
+            $.ajax({
+                type: 'GET',
+                url: 'users/read.php',
+                data: { id: userId },
+                success: function(response) {
+                    $('#username').text(response.username);
+                    $('#email').text(response.email);
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error: ' + error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

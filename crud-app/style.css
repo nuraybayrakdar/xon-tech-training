@@ -13,9 +13,10 @@ body {
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-
 h2 {
     text-align: center;
+    margin-top: 50px;
+    color: #333;
 }
 
 label {
@@ -51,4 +52,39 @@ input[type="submit"]:hover {
     margin-top: 10px;
     padding: 10px;
     border-radius: 5px;
+}
+
+#loginForm{
+    width: 300px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#registrationForm {
+    width: 300px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+#infoMessage {
+    text-align: center;
+    margin-top: 20px;
+    color: #555;
+}
+
+#infoMessage a {
+    color: #007bff;
+    text-decoration: none;
+    margin-left: 5px;
+}
+
+#infoMessage a:hover {
+    text-decoration: underline;
 }
