@@ -3,17 +3,6 @@
 <?php include "include/admin_sidebar.php";?>
         
 
-<div id="layoutSidenav_content">
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
- 
-                    <main>
-                    <div id="content-wrapper">
-                        <div class="container-fluid">
-                            <h1>Welcome to Admin Page</h1>
-                            <hr>
                             <table class="table table-bordered" id="userTable">
                                 <thead class="thead-dark">
                                     <tr>

@@ -19,7 +19,7 @@ if ($request_method == "POST") {
     } else {
         $createPost = createPost($input);
     }
-    echo json_encode($createPost);
+    echo $createPost;
 } else {
     $data = [
         "status" => 405,

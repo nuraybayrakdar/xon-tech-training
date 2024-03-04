@@ -7,15 +7,15 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: GET');
 header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, Authorization, X-Requested-With');
 
-include('../function/post_controller.php');
+include('../function/comment_controller.php');
 
 $request_method = $_SERVER["REQUEST_METHOD"];
 
 if ($request_method == "GET") {
-    if(isset($_GET['post_id'])){
-        $res = getPost($_GET['post_id']);
+    if(isset($_GET['comment_post_id'])){
+        $res = getCommentsByPostId($_GET['comment_post_id']);
     } else {
-        $res = getAllPosts();
+        $res = gelAllComments();
     }
     echo json_encode($res, JSON_PRETTY_PRINT);
 }else {
@@ -24,8 +24,9 @@ if ($request_method == "GET") {
         "message" => "This method is not allowed"
     ];
     http_response_code(405);
+    header('Content-Type: application/json; charset=utf-8');
     echo json_code($data, JSON_PRETTY_PRINT);
 }
-
+   
 
 ?>

@@ -26,7 +26,7 @@ if ($request_method == "POST") {
         "message" => "This method is not allowed"
     ];
     http_response_code(405);
-    echo $data, JSON_PRETTY_PRINT;
+    echo $data;
 }
 
 ?>

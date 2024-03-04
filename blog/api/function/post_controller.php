@@ -78,13 +78,13 @@ function createPost($data){
     $title = $data['post_title'];
     $content = $data['post_text'];
     $author = $data['post_author'];
-    $category_id = $data['post_category_id'];
+    $category_name = $data['post_category'];
     $image = $data['post_image'];
     $tags = $data['post_tags'];
     $date = date('Y-m,d'); 
     
-    $query = "INSERT INTO posts (post_category_id, post_title, post_author, post_date, post_comment_number, post_image, post_text, post_tags) 
-              VALUES ('$category_id', '$title', '$author', '$date', '0', '$image', '$content', '$tags')";
+    $query = "INSERT INTO posts (post_category, post_title, post_author, post_date, post_comment_number, post_image, post_text, post_tags) 
+              VALUES ('$category_name', '$title', '$author', '$date', '0', '$image', '$content', '$tags')";
               
     $query_run = mysqli_query($conn, $query);
 

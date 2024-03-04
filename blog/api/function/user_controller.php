@@ -1,6 +1,7 @@
 <?php
 
 require '../inc/dbcon.php';
+session_start();
 
 function createUser($data) {
     global $conn;
@@ -131,6 +132,75 @@ function getAllUsers() {
     
     header('Content-Type: application/json; charset=utf-8');
     return json_encode($data);
+}
+
+
+function login($data) {
+    global $conn;
+    // Gelen veriyi kontrol et
+    if(empty($data['user_name']) || empty($data['user_password'])) {
+        $response = [
+            "status" => 400,
+            "message" => "Missing username or password"
+        ];
+        http_response_code(400);
+        header('Content-Type: application/json; charset=utf-8');
+        return json_encode($response);
+    }
+
+    $user_name = $data['user_name'];
+    $user_password = $data['user_password'];
+    
+    $query = "SELECT * FROM users WHERE user_name = ? LIMIT 1";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, 's', $user_name);
+    $query_run = mysqli_stmt_execute($stmt);
+
+    if(!$query_run) {
+        $response = [
+            "status" => 500,
+            "message" => "Error executing query"
+        ];
+        http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
+        return json_encode($response);
+    }
+
+    $res = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($res);
+    
+    if(!$row) {
+        $response = [
+            "status" => 404,
+            "message" => "User not found"
+        ];
+        http_response_code(404);
+        header('Content-Type: application/json; charset=utf-8');
+        return json_encode($response);
+    }
+
+    if($user_name === $row['user_name'] && $user_password === $row['user_password']) {
+        $_SESSION['username'] = $row['user_name'];
+        $_SESSION['email'] = $row['user_email'];
+        $_SESSION['role'] = $row['user_role'];
+
+        $response = [
+            "status" => 200,
+            "message" => "Login successful",
+            "data" => $row
+        ];
+        http_response_code(200);
+        header('Content-Type: application/json; charset=utf-8');
+        return json_encode($response);
+    } else {
+        $response = [
+            "status" => 401,
+            "message" => "Invalid credentials"
+        ];
+        http_response_code(401);
+        header('Content-Type: application/json; charset=utf-8');
+        return json_encode($response);
+    }
 }
 
 

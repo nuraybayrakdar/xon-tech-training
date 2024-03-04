@@ -1,15 +1,7 @@
 <?php include "include/admin_header.php";?>
+
 <?php include "include/admin_sidebar.php";?>
-<div id="layoutSidenav_content">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <main>
-        <div id="content-wrapper">
-            <div class="container-fluid">
-                <h1>Welcome to Admin Page</h1>
-                <hr>
+
                 <table class="table table-bordered" id="postTable">
                     <thead class="thead-dark">
                         <tr>
@@ -99,7 +91,7 @@
                             </button>
                         </div>
                         <div class="modal-body" id="add_modal_body">
-                            <form id="add_modal_form" action="" method="post">
+                            <form id="add_modal_form" action="" method="post" enctype="multipart/form-data">
                                 <div class="form-group" id="add_modal_form_group">
                                     <label for="post_title">Post Title</label>
                                     <input type="text" class="form-control" name="post_title" required>
@@ -157,10 +149,11 @@
                                     tableContent += '<tr>';
                                     tableContent += '<td>' + post.post_id + '</td>';
                                     tableContent += '<td>' + post.post_title + '</td>';
-                                    tableContent += '<td>' + post.post_category_id + '</td>';
+                                    tableContent += '<td>' + post.post_category + '</td>';
                                     tableContent += '<td>' + post.post_author + '</td>';
                                     tableContent += '<td>' + post.post_date + '</td>';
-                                    tableContent += '<td>' + post.post_image + '</td>';
+                                    tableContent += '<td><img src="assets/' + post.post_image + '" width="80px" height="80px"></td>';
+
                                     tableContent += '<td>' + post.post_comment_number + '</td>';
                                     tableContent += '<td>' + post.post_text + '</td>';
                                     tableContent += '<td>' + post.post_tags + '</td>';
@@ -218,7 +211,7 @@
                         
                         const formData = {
                             post_title: $('#add_modal_form input[name="post_title"]').val(),
-                            post_category_id: $('#add_modal_form input[name="post_category"]').val(),
+                            post_category: $('#add_modal_form input[name="post_category"]').val(),
                             post_author: $('#add_modal_form input[name="post_author"]').val(),
                             post_image: $('#add_modal_form input[name="post_image"]').val(),
                             post_tags: $('#add_modal_form input[name="post_tags"]').val(),
