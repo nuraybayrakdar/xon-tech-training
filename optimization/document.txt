@@ -1,0 +1,79 @@
+
+
+1. SQL Injection: Web uygulamalarına zararlı SQL kodları enjekte edilerek 
+veritabanı üzerinde istenmeyen işlemler yapılabilir. Bunları engellemek için
+prepared statement ve parametreli sorgular kullanılmalıdır. 
+
+Örneğin:  
+    $sql = "INSERT INTO comments (name, email, comment) VALUES ('$name', '$email', '$comment')";
+    SQL injecitondan kaçınmak için sorguyu bu şekilde kullanmadık. Parameterized query kullandık.
+    
+    $sql = "INSERT INTO comments (name, email, comment) VALUES (:name, :email, :comment)";
+    $stmt = $conn->prepare($sql);
+ 
+2. Path Traversal:  Kullanıcı tarafından girilen dosya adı parametresi ile dosya işlemleri yapılırken
+güvenlik önlemleri alınmamışsa, kullanıcı istediği dosyayı okuyabilir.
+
+    Örneğin: $dosya = $_GET["myfile"];
+
+
+    kullanıcı burada dosya parametresine ../../../../../etc/passwd gibi bir değer gönderirse
+    /etc/passwd dosyasının içeriğini görebilir. Bundan kaçınmak için dosya adını kontrol etmeliyiz.
+    Şunları kulanabiliriz: realpath(), pathinfo(), basename(), is_file(), file_exists(), is_readable()
+
+    $dosya = realpath($_GET["myfile"]);
+
+
+
+3. XSS (Cross Site Scripting): Input alanlarına zararlı kodlar enjekte edilerek kullanıcıların tarayıcılarında
+ çalıştırılabilir. Bu saldırıyı önlemek için kullanıcı girdileri sanitize edilmelidir. 
+
+
+    Örneğin: 
+    var cleanName = DOMPurify.sanitize(name);
+    var cleanEmail = DOMPurify.sanitize(email);
+    var cleanComment = DOMPurify.sanitize(comment);
+
+
+4. IDOR (Insecure Direct Object References): Kullanıcı tarafından girilen ID parametresi ile 
+veritabanından veri çekilirken, kullanıcı yetkisi olmayan verilere erişebilir. 
+
+    Örneğin: 
+    $id = $_GET["id"]; // Kullanıcı tarafından girilen ID
+    $kullanici = get_user_by_id($id);
+
+    if ($kullanici) {
+    echo "Kullanıcı adı: " . $kullanici["kullanici_adi"];
+    } else {
+    echo "Kullanıcı bulunamadı.";
+    }
+
+    Bu durumu önlemek için yetkilendirme kontrolü yapılmalıdır.
+
+5. CSRF (Cross Site Request Forgery): Kullanıcılar oturum açıkken, kötü niyetli bir kullanıcı tarafından 
+tarayıcılarında istenmeyen işlemler yapılabilir. Bu saldırıyı önlemek için token kullanılmalıdır.
+
+    Örneğin: 
+    <input type="hidden" name="csrf_token" value="token123">
+    <input type="submit" value="Submit">
+
+    Form gönderilirken, token kontrolü yapılmalıdır.
+
+    if ($_POST['csrf_token'] === $_SESSION['csrf_token']) {
+        // 
+    } else {
+        // 
+    }
+
+6. Session Hijacking: Kullanıcı oturum bilgileri ele geçirilerek, kullanıcının hesabına erişim sağlanabilir.
+Bu saldırıyı önlemek için oturum bilgileri güvenli bir şekilde saklanmalıdır. 
+
+
+    Örneğin: 
+    session_start();
+    $_SESSION['user'] = $user;
+
+    session_regenerate_id(true);
+
+
+
