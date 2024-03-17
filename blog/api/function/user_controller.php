@@ -5,39 +5,86 @@ session_start();
 
 function createUser($data) {
     global $conn;
+    
     $data = json_decode(file_get_contents("php://input"), true);
-    $user_name = $data['user_name'];
-    $user_email = $data['user_email'];
-    $user_password = $data['user_password'];
-    $user_role = $data['user_role'];
-
-    $query = "INSERT INTO users (user_name, user_email, user_password, user_role) VALUES ('$user_name', '$user_email', '$user_password', '$user_role')";
-    $query_run = mysqli_query($conn, $query);
-
-    if ($query_run) {
-        $data = [
-            "status" => 201,
-            "message" => "User created successfully"
-        ];
-        header('Content-Type: application/json; charset=utf-8');
-        http_response_code(201);
-        return json_encode($data);
+    $stmt = mysqli_prepare($conn, "INSERT INTO users (user_name, user_email, user_password, user_role) VALUES (?, ?, ?, ?)");
+  
+    $user_name = mysqli_real_escape_string($conn, $data['user_name']);
+    $user_email = mysqli_real_escape_string($conn, $data['user_email']);
+    $user_password = password_hash($data['user_password'], PASSWORD_DEFAULT); 
+    $user_role = mysqli_real_escape_string($conn, $data['user_role']);
+  
+    
+    mysqli_stmt_bind_param($stmt, "ssss", $user_name, $user_email, $user_password, $user_role);
+  
+    
+    if (mysqli_stmt_execute($stmt)) {
+      $data = [
+        "status" => 201,
+        "message" => "User created successfully"
+      ];
+      http_response_code(201); 
     } else {
-        $data = [
-            "status" => 500,
-            "message" => "Failed to create user"
-        ];
-        header('Content-Type: application/json; charset=utf-8');
-        http_response_code(500);
-        return json_encode($data);
+      $error_message = mysqli_stmt_error($stmt);
+      $data = [
+        "status" => 500,
+        "message" => "Failed to create user: $error_message"
+      ];
+      
     }
-    
-}
+  
+    mysqli_stmt_close($stmt); 
+  
+    header('Content-Type: application/json; charset=utf-8');
+    return json_encode($data);
+  }
+  
 
-function updateUser() {
+  function updateUser($data) {
+    global $conn;
     
-}
+    if (!isset($data['user_id'])) {
+      $data = [
+        "status" => 400,
+        "message" => "User ID is required"
+      ];
+      http_response_code(400); 
+      return json_encode($data);
+    }
+  
+    $user_id = mysqli_real_escape_string($conn, $data['user_id']);     
+    $stmt = mysqli_prepare($conn, "UPDATE users SET user_name = ?, user_email = ?, user_password = ?, user_role = ? WHERE user_id = ?");
 
+    $user_name = mysqli_real_escape_string($conn, $data['user_name']);
+    $user_email = mysqli_real_escape_string($conn, $data['user_email']);
+    $user_password = isset($data['user_password']) ? password_hash($data['user_password'], PASSWORD_DEFAULT) : null;
+    $user_role = mysqli_real_escape_string($conn, $data['user_role']);
+  
+    
+    mysqli_stmt_bind_param($stmt, "sssss", $user_name, $user_email, $user_password, $user_role, $user_id);
+  
+    
+    if (mysqli_stmt_execute($stmt)) {
+      $data = [
+        "status" => 200,
+        "message" => "User updated successfully"
+      ];
+      http_response_code(200); 
+      return $data;
+    } else {
+      $error_message = mysqli_stmt_error($stmt);
+      $data = [
+        "status" => 500,
+        "message" => "Failed to update user: $error_message"
+      ];
+      
+    }
+  
+    mysqli_stmt_close($stmt); 
+    header('Content-Type: application/json; charset=utf-8');
+    return json_encode($data);
+  }
+  
 function deleteUser($user_id) {
     global $conn;
 
@@ -136,72 +183,86 @@ function getAllUsers() {
 
 
 function login($data) {
-    global $conn;
-    // Gelen veriyi kontrol et
-    if(empty($data['user_name']) || empty($data['user_password'])) {
-        $response = [
-            "status" => 400,
-            "message" => "Missing username or password"
-        ];
-        http_response_code(400);
-        header('Content-Type: application/json; charset=utf-8');
-        return json_encode($response);
-    }
-
+    global $conn;  
     $user_name = $data['user_name'];
-    $user_password = $data['user_password'];
-    
-    $query = "SELECT * FROM users WHERE user_name = ? LIMIT 1";
-    $stmt = mysqli_prepare($conn, $query);
+  
+    $stmt = mysqli_prepare($conn, "SELECT * FROM users WHERE user_name = ? LIMIT 1");
     mysqli_stmt_bind_param($stmt, 's', $user_name);
-    $query_run = mysqli_stmt_execute($stmt);
-
-    if(!$query_run) {
-        $response = [
-            "status" => 500,
-            "message" => "Error executing query"
-        ];
-        http_response_code(500);
-        header('Content-Type: application/json; charset=utf-8');
-        return json_encode($response);
-    }
-
-    $res = mysqli_stmt_get_result($stmt);
-    $row = mysqli_fetch_assoc($res);
-    
-    if(!$row) {
-        $response = [
-            "status" => 404,
-            "message" => "User not found"
-        ];
-        http_response_code(404);
-        header('Content-Type: application/json; charset=utf-8');
-        return json_encode($response);
-    }
-
-    if($user_name === $row['user_name'] && $user_password === $row['user_password']) {
-        $_SESSION['username'] = $row['user_name'];
-        $_SESSION['email'] = $row['user_email'];
-        $_SESSION['role'] = $row['user_role'];
-
-        $response = [
+  
+    if (mysqli_stmt_execute($stmt)) {
+      $result = mysqli_stmt_get_result($stmt);
+      $row = mysqli_fetch_assoc($result);
+  
+      if ($row) {
+        if (password_verify($data['user_password'], $row['user_password'])) {
+          $_SESSION['username'] = $row['user_name'];
+          $_SESSION['email'] = $row['user_email'];
+          $_SESSION['role'] = $row['user_role'];
+  
+          $response = [
             "status" => 200,
-            "message" => "Login successful",
-            "data" => $row
-        ];
-        http_response_code(200);
-        header('Content-Type: application/json; charset=utf-8');
-        return json_encode($response);
-    } else {
-        $response = [
+            "message" => "Login successful"
+          ];
+          http_response_code(200);
+          return json_encode($response);
+        } else {
+          $response = [
             "status" => 401,
             "message" => "Invalid credentials"
+          ];
+          http_response_code(401);
+          return json_encode($response);
+        }
+      } else {
+        $response = [
+          "status" => 404,
+          "message" => "User not found"
         ];
-        http_response_code(401);
-        header('Content-Type: application/json; charset=utf-8');
+        http_response_code(404);
         return json_encode($response);
+      }
+    } else {
+      $error_message = mysqli_stmt_error($stmt);
+      $response = [
+        "status" => 500,
+        "message" => "Error executing query: $error_message"
+      ];
+      http_response_code(500);
+      return json_encode($response);
     }
+  
+    mysqli_stmt_close($stmt);
+  }
+
+
+  function getDashboard() {
+    global $conn;
+
+    $query1 = "SELECT COUNT(*) as totalPosts FROM posts";
+    $stmt1 = $conn->prepare($query1);
+    $stmt1->execute();
+    $totalPosts = $stmt1->get_result()->fetch_assoc()['totalPosts'];
+
+    $query2 = "SELECT COUNT(*) as totalComments FROM comments";
+    $stmt2 = $conn->prepare($query2);
+    $stmt2->execute();
+    $totalComments = $stmt2->get_result()->fetch_assoc()['totalComments'];
+
+    $query3 = "SELECT COUNT(*) as totalUsers FROM users";
+    $stmt3 = $conn->prepare($query3);
+    $stmt3->execute();
+    $totalUsers = $stmt3->get_result()->fetch_assoc()['totalUsers'];
+
+    $data = [
+        "totalPosts" => $totalPosts,
+        "totalComments" => $totalComments,
+        "totalUsers" => $totalUsers
+    ];
+
+    header('Content-Type: application/json; charset=utf-8');
+    return json_encode($data);
 }
 
+  
 
 ?>

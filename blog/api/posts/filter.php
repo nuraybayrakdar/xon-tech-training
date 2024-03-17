@@ -13,16 +13,11 @@ $request_method = $_SERVER["REQUEST_METHOD"];
 
 if ($request_method == "GET") {
 
-    if(isset($_GET['post_id'])){
-        $post_id = $_GET['post_id'];
-        $res = getPost($post_id);
-      
-    } else {
-    $page = isset($_GET['page']) ? $_GET['page'] : 1;
-    $limit = isset($_GET['limit']) ? $_GET['limit'] : 1;
+    
+        $category_name = $_GET['category_name'];
+        $res = filterByCategory($category_name);
 
-    $res = getAllPosts($limit, ($page - 1) * $limit);
-    }
+    
     echo json_encode($res, JSON_PRETTY_PRINT);
 } else {
     $data = [

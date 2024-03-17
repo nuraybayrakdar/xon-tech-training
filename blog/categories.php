@@ -18,9 +18,7 @@
                                     <tr>
                                         <td>1</td>
                                         <td>Sample Category Name</td>
-                                        <td>
-                                       
-                                       
+                                        <td>                                       
                                         </td>
                                     </tr>
                                 </tbody>
@@ -65,7 +63,7 @@
                     });
 
                     $(document).on('click', '.deleteBtn', function() {
-                        var categoryId = $(this).closest('tr').find('td:first').text(); // Get the category ID from the row
+                        var categoryId = $(this).closest('tr').find('td:first').text(); 
 
                         if (confirm('Are you sure you want to delete this category?')) {
                             $.ajax({
@@ -87,9 +85,11 @@
                         }
                         });
 
+                   
+
                         $(document).on('click', '.editBtn', function() {
-                        var categoryId = $(this).closest('tr').find('td:first').text(); // Get the category ID from the row
-                        var categoryName = $(this).closest('tr').find('td:nth-child(2)').text(); // Get the category name from the row
+                        var categoryId = $(this).closest('tr').find('td:first').text(); 
+                        var categoryName = $(this).closest('tr').find('td:nth-child(2)').text(); 
 
                         $('#edit-modal-form input[name="category_id"]').val(categoryId);
                         $('#edit-modal-form input[name="category_name"]').val(categoryName);

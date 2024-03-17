@@ -16,7 +16,7 @@ if(isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Blog Home</title>
+    <title>Blogia</title>
     <link href="css/styles.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
@@ -24,7 +24,7 @@ if(isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-     <a class="navbar-brand text-info fw-bold pl-10 pr-10 "href="index.php" >Blogia</a>
+        <a class="navbar-brand text-info fw-bold" href="index.php">Blogia</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -63,31 +63,13 @@ if(isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
     <div class="row">
 
         <div class="col-lg-8" id="post-content">
-        
-
-
+            <!-- Post area -->
         </div>
 
-        <div class="col-lg-4">
-        <div class="card mb-4 category-card">
-            <div class="card-header bg-info text-dark">Categories</div>
-            <div class="card-body" id="category-list">
-                <!-- Category list -->
-                <div class="list-group">
-                    <!-- Kategori öğeleri buraya eklenecek -->
-                </div>
-            </div>
-        </div>
-
-        
     </div>
-
 </div>
 
-   
-</div>
-
-<div id="pagination" class="d-flex justify-content-center mt-4"></div>
+<div id="pagination" class="d-flex justify-content-center mt-4 bg-info"></div>
 
 <footer class="py-5 bg-dark">
     <div class="container">
@@ -98,19 +80,24 @@ if(isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
 <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    $(document).ready(function(){
-        var currentPage = 1;
-        var postsPerPage = 2;
+        $(document).ready(function(){
+            var currentPage = 1;
+            var postsPerPage = 2;
+            const urlParams = new URLSearchParams(window.location.search);
+                const post_category = urlParams.get('category_name');
+        
 
-        fetchPosts(currentPage);
+        
 
-        function fetchPosts(page) {
+        
             $.ajax({
-                url: '../api/posts/read.php',
+               
+               
+                url: '../api/posts/filter.php/?category_name=' + post_category,
                 method: 'GET',
-                data: { page: page, limit: postsPerPage },
                 success: function(response){
                     var posts = JSON.parse(response);
+                    console.log(posts);
 
                     if (posts.status === 200) {
                         displayPosts(posts.data);
@@ -123,32 +110,28 @@ if(isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
                     console.error(error);
                 }
             });
+        
+
+        function displayPosts(posts) {
+            var postList = $('#post-content');
+            postList.empty();
+
+            $.each(posts, function(index, post){
+                var postCard = $('<div class="card mb-4"></div>');
+                var postImage = $('<a href="#!"><img class="card-img-top" src="../uploads/' + post.post_image + '" width="100px" height="200px" alt="..." /></a>');
+                var postBody = $('<div class="card-body"></div>');
+                var postDate = $('<div class="small text-muted">' + post.post_date + '</div>');
+                var postCategory = $('<div class="small text-muted">' + post.post_category + '</div>');
+                var postTitle = $('<h2>' + post.post_title + '</h2>');
+                var postText = $('<p class="card-text">' + post.post_text + '</p>');
+                var readMore = $('<a class="btn btn-primary bg-info text-dark" href="post-detail.php/?post_id='+ post.post_id +'">Read more →</a>');
+
+                postBody.append(postDate, postCategory, postTitle, postText, readMore);
+                postCard.append(postImage, postBody);
+
+                postList.append(postCard);
+            });
         }
-function displayPosts(posts) {
-  var postList = $('#post-content');
-  postList.empty();
-
-  $.each(posts, function(index, post){
-    var postCard = $('<div class="card mb-4"></div>');
-    var postImage = $('<a href="#!"><img class="card-img-top" src="../uploads/' + post.post_image + '" width="100px" height="200px" alt="..." /></a>');
-    var postBody = $('<div class="card-body post-body-flex"></div>');
-
-    var postTextContent = $('<div class="post-text-content">');
-    var postDate = $('<div class="small text-muted">' + post.post_date + '</div>');
-    var postCategory = $('<div class="small text-muted">' + post.post_category + '</div>');
-    var postTitle = $('<h2>' + post.post_title + '</h2>');
-    var postText = $('<p class="card-text">' + post.post_text + '</p>');
-    var readMore = $('<a class="btn btn-primary bg-info text-dark" href="post-detail.php/?post_id='+ post.post_id +'">Read more →</a>');
-
-    postTextContent.append(postDate, postCategory, postTitle, postText, readMore);
-    postBody.append(postImage, postTextContent); // Image first, then text content
-
-    postCard.append(postImage, postBody);
-
-    postList.append(postCard);
-  });
-}
-
 
         function displayPagination(currentPage, totalPages) {
             var pagination = $('#pagination');
@@ -156,7 +139,7 @@ function displayPosts(posts) {
 
             if (totalPages > 1) {
                 for (var i = 1; i <= totalPages; i++) {
-                    var pageButton = $('<button class="btn btn-sm btn-outline-primary mx-1 bg-info">' + i + '</button>');
+                    var pageButton = $('<button class="btn btn-sm btn-outline-primary mx-1">' + i + '</button>');
                     pageButton.click(function(){
                         var pageNumber = parseInt($(this).text());
                         fetchPosts(pageNumber);
@@ -172,29 +155,6 @@ function displayPosts(posts) {
                 console.log("Only one page available, no pagination required.");
             }
         }
-
-         $.ajax({
-            url: '../api/categories/read.php',
-            method: 'GET',
-            success: function(response) {
-                var categories = JSON.parse(response);
-
-                if (categories.status === 200) {
-                    var categoryList = $('#category-list .list-group');
-                    categoryList.empty();
-
-                    $.each(categories.data, function(index, category) {
-                        var categoryItem = $('<a href="categories_posts.php?category_name=' + category.category_name + '" class="list-group-item">' + category.category_name + '</a>');
-                        categoryList.append(categoryItem);
-                    });
-                } else {
-                    console.error("Error fetching categories:", categories.message);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-            }
-        });
 
     });
 </script>

@@ -1,3 +1,15 @@
+<?php session_start(); 
+
+if(isset($_SESSION["username"]) && !empty($_SESSION["username"])) {
+    $username = $_SESSION["username"];
+    $welcomeMessage = "Welcome, $username! Let's read something.";
+} else {
+    $welcomeMessage = "Welcome! Let's read something.";
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -13,19 +25,38 @@
     </head>
     <body>
         
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="../index.php">Blog Site</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="../index.php">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../../login.php">Login</a></li>
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Blog</a></li>
-                    </ul>
-                </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand text-info fw-bold" href="../../index.php">Blogia</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="container" style="padding: 20px; text-align: center;">
+            <div class="welcome-message bg-info text-dark" style="font-family: Arial, sans-serif; font-size: 16px; color: #fff; padding: 10px; background-color: #ffc107; border-radius: 5px; display: inline-block;">
+                <?php echo $welcomeMessage; ?>
             </div>
-        </nav>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+            <a class="nav-link text-light fw-bold" href="../../index.php">Home</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link active text-info fw-bold" aria-current="page" href="#">Blog</a>
+            </li>
+            <li class="nav-item">
+            <?php if(isset($_SESSION["username"]) && !empty($_SESSION["username"])): ?>
+                    <form id="logoutForm" action="../../logout.php" method="post">
+                        <button type="submit" class="btn text-light fw-bold btn-transparent" name="logout">Logout</button>
+                    </form>
+                <?php else: ?>
+                    <li class="nav-item"><a class="nav-link" href="../../login.php">Login</a></li>
+                <?php endif; ?>
+            </li>
+        </ul>
+</div>
+    </div>
+</nav>
         
         <div class="container mt-5">
             <div class="row">
@@ -68,7 +99,7 @@
                                             placeholder="Leave your comment..." required></textarea>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Submit Comment</button>
+                                <button type="submit" class="btn btn-primary bg-info text-dark">Submit Comment</button>
                             </form>
                             <div class="card-body" id="comment-body">
                                 
@@ -97,10 +128,10 @@
                 <div class="col-lg-4">
                     
                     
-                    <div class="card mb-4">
-                        <div class="card-header">Categories</div>
+                    <div class="card mb-4 category-card">
+                        <div class="card-header bg-info text-dark">Categories</div>
                         <div class="card-body" id="category-list">
-                            <div class="row">
+                            <div class="list-group">
                                
                             </div>
                         </div>
@@ -115,7 +146,7 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const post_id = urlParams.get('post_id');
 
-                // Yorum yapma formunu işle
+    
                 $('#comment-form').submit(function(event) {
                     event.preventDefault();
 
@@ -130,6 +161,7 @@
                         data: {
                             comment_post_id: post_id,
                             comment_author: commenterName,
+                            comment_email: comenterEmail,
                             comment_text: commentContent
                         },
                         success: function(response) {
@@ -149,12 +181,13 @@
                     type: 'GET',
                     dataType: 'json', 
                     success: function(data) {
+                        
                         console.log(data);
                         data = JSON.parse(data); 
                         document.getElementById('post-title').innerHTML = data.data.post_title; 
                         document.getElementById('post-date').innerHTML = `Posted on ${data.data.post_date} by ${data.data.post_author}`;
                         document.getElementById('post-category').innerHTML = data.data.post_category;
-                        document.getElementById('post-image').innerHTML = `<img class="img-fluid rounded" src="../../assets/${data.data.post_image}" alt="..." />`;
+                        document.getElementById('post-image').innerHTML = `<img class="img-fluid rounded" src="../../uploads/${data.data.post_image}" alt="..." />`;
                         document.getElementById('post-details').innerHTML = data.data.post_text;
                     },
                     error: function(xhr, status, error) {
@@ -172,11 +205,11 @@
                         var categories = JSON.parse(response);
 
                         if (categories.status === 200) {
-                            var categoryList = $('#category-list');
+                            var categoryList = $('#category-list .list-group');
                             categoryList.empty(); 
 
                             $.each(categories.data, function(index, category) {
-                                var categoryItem = $('<li><a href="#">' + category.category_name + '</a></li>');
+                                var categoryItem = $('<a class="list-group-item" href="#">' + category.category_name + '</a>');
                                 categoryList.append(categoryItem);
                             });
                         } else {
@@ -191,9 +224,12 @@
                 });
 
                 $.ajax({
-                        url: "../../api/comments/read.php?post_id=" + post_id,
+                        url: "../../api/comments/read.php",
                         type: 'GET',
                         dataType: 'json',
+                        data: {
+                            comment_post_id: post_id 
+                        },
                         success: function(response) {
                             console.log(response);
                             var comments = JSON.parse(response);
@@ -240,7 +276,7 @@
 
         
         <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">/p></div>
+            <div class="container"><p class="m-0 text-center text-white"></div>
         </footer>
         
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>

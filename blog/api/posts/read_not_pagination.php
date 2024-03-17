@@ -18,10 +18,9 @@ if ($request_method == "GET") {
         $res = getPost($post_id);
       
     } else {
-    $page = isset($_GET['page']) ? $_GET['page'] : 1;
-    $limit = isset($_GET['limit']) ? $_GET['limit'] : 1;
+    
 
-    $res = getAllPosts($limit, ($page - 1) * $limit);
+    $res = getAllPostsNoPagin();
     }
     echo json_encode($res, JSON_PRETTY_PRINT);
 } else {

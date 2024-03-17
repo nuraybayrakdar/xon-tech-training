@@ -12,7 +12,7 @@
                                         <th>Author</th>
                                         <th>Date</th>
                                         <th>Comment</th> 
-                                        <th><button id="add_modal_btn" type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_modal">Add New Category</button></th>
+                                        <th><button id="add_modal_btn" type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_modal">Add New Comment</button></th>
                                         
                                     </tr>
                                 </thead>

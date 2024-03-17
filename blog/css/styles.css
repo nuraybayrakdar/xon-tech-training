@@ -10,6 +10,7 @@
  * Copyright 2011-2022 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
@@ -425,6 +426,8 @@ legend + * {
   clear: left;
 }
 
+
+
 ::-webkit-datetime-edit-fields-wrapper,
 ::-webkit-datetime-edit-text,
 ::-webkit-datetime-edit-minute,
@@ -476,6 +479,19 @@ iframe {
 summary {
   display: list-item;
   cursor: pointer;
+}
+.post-body-flex {
+  display: flex;
+  flex-direction: row;
+}
+
+.postImage {
+  width: 100px;
+  margin-right: 10px;
+}
+
+.postTextContent {
+  flex: 1;
 }
 
 progress {
@@ -577,6 +593,14 @@ progress {
 .initialism {
   font-size: 0.875em;
   text-transform: uppercase;
+}
+
+.list-group-item {
+  cursor: pointer;
+}
+
+.list-group-item:hover {
+  background-color: #f8f9fa;
 }
 
 .blockquote {
@@ -1081,6 +1105,8 @@ progress {
     flex: 0 0 auto;
     width: 33.3333333333%;
   }
+
+  
   .row-cols-md-4 > * {
     flex: 0 0 auto;
     width: 25%;
@@ -4346,6 +4372,8 @@ textarea.form-control-lg {
     border-bottom-left-radius: 0;
   }
 }
+
+
 
 .accordion {
   --bs-accordion-color: #212529;

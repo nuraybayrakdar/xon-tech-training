@@ -29,7 +29,7 @@
                             <a class="nav-link" href="login.php">
                                 <div class="sb-nav-link-icon"><i class="fas  fa-sign-out"></i></div>
                                 Logout<?php if(isset($_SESSION['username'])){
-                                    session_destroy();
+                                    
                                 } ?>
                             </a>
 

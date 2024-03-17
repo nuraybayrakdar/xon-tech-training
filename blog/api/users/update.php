@@ -7,37 +7,25 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: PUT');
 header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, Authorization, X-Requested-With');
 
-include('../function/post_controller.php');
+include('../function/user_controller.php');
 
 $request_method = $_SERVER["REQUEST_METHOD"];
 
 if ($request_method == "PUT") {
     $inputData = json_decode(file_get_contents('php://input'), true);
 
-if ($inputData === null) {
-    $data = [
-        "status" => 400,
-        "message" => "Hatalı JSON formatı",
-        "error" => json_last_error_msg() // JSON hata mesajını ekleyin
-    ];
-    http_response_code(400);
-    echo json_encode($data);
-    exit; // İşlemi sonlandırın
-}
-
-    if (json_last_error() === JSON_ERROR_NONE) {
-        $updatePost = updatePost($inputData);
-        echo $updatePost;
+    if (!empty($inputData)) {
+        $updateUser = updateUser($inputData);
+        echo json_encode($updateUser);
     } else {
         $data = [
             "status" => 400,
-            "message" => "Hatalı JSON formatı",
+            "message" => "Güncellenecek kullanıcı adı veya kimliği sağlanmadı",
             "input" => $inputData
         ];
         http_response_code(400);
         echo json_encode($data);
     }
-    
 } else {
     $data = [
         "status" => 405,

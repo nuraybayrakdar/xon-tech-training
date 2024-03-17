@@ -12,6 +12,7 @@ include('../function/post_controller.php');
 
 $request_method = $_SERVER["REQUEST_METHOD"];
 
+
 if ($request_method == "POST") {
     $input = json_decode(file_get_contents('php://input'), true);
     if (empty($input)) {

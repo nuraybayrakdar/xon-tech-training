@@ -25,7 +25,7 @@
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
         
     </head>
-    <body class="bg-primary">
+    <body class="bg-info">
         <div id="layoutAuthentication">
             <div id="layoutAuthentication_content">
                 <main>
@@ -46,7 +46,7 @@
                                             </div>
                                             
                                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                                <button class="btn btn-primary btn-block" name="login" type="submit" > Login</button>
+                                                <button class="btn btn-primary btn-block bg-info" name="login" type="submit" > Login</button>
                                             </div>
                                         </form>
                                     </div>
